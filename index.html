@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Portal Dulces</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-100 text-slate-800 pb-20">
+<div id="d" class="bg-yellow-100 border-b-4 border-yellow-400 text-xs p-3"><div class="max-w-md mx-auto"><div class="flex justify-between mb-1"><b>Diagnostico</b><button onclick="document.getElementById('d').style.display='none'" class="bg-yellow-300 px-2 rounded font-bold">X</button></div><div id="dc" class="font-mono text-[10px] whitespace-pre-wrap"><div id="ds" style="color:#991b1b;font-weight:bold">JS no ejecutado</div></div></div></div>
+<div id="ts" class="fixed top-4 right-4 z-50 space-y-2 pointer-events-none max-w-xs"></div>
+<header class="bg-gradient-to-r from-indigo-700 to-violet-700 text-white shadow-lg sticky top-0 z-20"><div class="max-w-md mx-auto px-4 py-3 flex justify-between items-center"><div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center text-xl">&#127852;</div><div><h1 class="text-base font-bold">Portal Dulces</h1><p id="cs" class="text-[10px] text-indigo-200">Conectando...</p></div></div><span class="text-[11px] bg-white/10 px-2 py-1 rounded-full font-semibold">USD ($)</span></div></header>
+<main class="max-w-md mx-auto p-4 space-y-4">
+<section class="grid grid-cols-2 gap-3">
+<div class="bg-white rounded-xl p-3 border shadow-sm"><p class="text-[10px] uppercase font-bold text-slate-500">Por cobrar</p><p id="s1" class="text-xl font-extrabold text-indigo-700">$0.00</p></div>
+<div class="bg-white rounded-xl p-3 border shadow-sm"><p class="text-[10px] uppercase font-bold text-slate-500">Pendientes</p><p id="s2" class="text-xl font-extrabold">0</p></div>
+<div class="bg-white rounded-xl p-3 border shadow-sm"><p class="text-[10px] uppercase font-bold text-rose-600">Vencidas</p><p id="s3" class="text-xl font-extrabold text-rose-600">0</p></div>
+<div class="bg-white rounded-xl p-3 border shadow-sm"><p class="text-[10px] uppercase font-bold text-emerald-600">Cobrado</p><p id="s4" class="text-xl font-extrabold text-emerald-600">$0.00</p></div>
+</section>
+<section class="bg-white rounded-xl shadow-sm border overflow-hidden">
+<div class="flex justify-between items-center px-4 py-3 border-b bg-slate-50"><h2 id="ft" class="text-sm font-bold flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-indigo-500"></span>Registrar Venta</h2><button id="bc" onclick="cx()" class="hidden text-[11px] bg-slate-200 px-2 py-1 rounded font-semibold">Cancelar</button></div>
+<form id="fma" class="p-4 space-y-3">
+<input type="hidden" id="eid">
+<div><label class="block text-[11px] font-bold mb-1 uppercase">Cliente</label><input id="cl" list="dl" required maxlength="60" placeholder="Nombre" class="w-full border rounded-lg p-2.5 text-sm"></div>
+<datalist id="dl"></datalist>
+<div><label class="block text-[11px] font-bold mb-1 uppercase">Producto</label><select id="pr" required class="w-full border rounded-lg p-2.5 text-sm bg-white"><option value="">Cargando...</option></select></div>
+<div class="grid grid-cols-2 gap-3">
+<div><label class="block text-[11px] font-bold mb-1 uppercase">Cantidad</label><div class="flex border rounded-lg overflow-hidden"><button type="button" onclick="sq(-1)" class="px-3 font-bold">&minus;</button><input type="number" id="qt" value="1" min="1" oninput="calc()" class="w-full text-center p-2 text-sm font-semibold outline-none"><button type="button" onclick="sq(1)" class="px-3 font-bold">+</button></div></div>
+<div><label class="block text-[11px] font-bold mb-1 uppercase">Total ($)</label><input id="tt" readonly value="0.00" class="w-full border rounded-lg p-2.5 text-sm bg-slate-50 font-extrabold text-indigo-700 text-right"></div>
+</div>
+<div><label class="block text-[11px] font-bold mb-1 uppercase">Fecha Venc.</label><input type="date" id="fv" required class="w-full border rounded-lg p-2.5 text-sm"></div>
+<button id="bs" class="w-full bg-indigo-600 text-white font-bold py-2.5 rounded-lg text-sm"><span id="bst">Guardar</span></button>
+</form>
+</section>
+<section class="bg-indigo-50 rounded-xl border p-4 space-y-3">
+<div class="flex justify-between"><h2 class="text-[11px] font-bold text-indigo-900 uppercase">Filtros</h2><button onclick="lf()" class="text-[11px] text-indigo-600 underline font-semibold">Limpiar</button></div>
+<input id="fc" oninput="rv()" placeholder="Buscar cliente..." class="w-full border rounded-lg p-2.5 text-sm bg-white">
+<div class="grid grid-cols-2 gap-2">
+<input type="date" id="ff" onchange="rv()" class="w-full border rounded-lg p-2.5 text-sm bg-white">
+<select id="fe" onchange="rv()" class="w-full border rounded-lg p-2.5 text-sm bg-white"><option value="PENDIENTE">Pendientes</option><option value="VENCIDAS">Vencidas</option><option value="PAGADO">Pagados</option><option value="TODOS">Todos</option></select>
+</div>
+<div class="flex justify-between items-center pt-2 border-t"><span class="text-[11px] text-indigo-700 font-semibold">Saldo:</span><span id="tf" class="font-extrabold text-indigo-900 text-lg">$0.00</span></div>
+</section>
+<section class="space-y-3">
+<div class="flex justify-between"><h2 class="text-base font-bold">Ventas</h2><span id="cn" class="text-[11px] text-slate-500"></span></div>
+<div id="lv" class="space-y-3"><p class="text-center text-xs text-slate-400 py-6">Cargando...</p></div>
+</section>
+</main>
+<div id="ma" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" onclick="if(event.target===this)cm('ma')"><div class="bg-white rounded-2xl w-full max-w-md p-5 space-y-4">
+<h3 class="text-lg font-bold">Registrar Abono</h3>
+<p id="ac" class="text-xs text-slate-500"></p>
+<div class="bg-indigo-50 rounded-lg p-3 flex justify-between"><span class="text-xs font-semibold text-indigo-800">Saldo actual</span><span id="asa" class="font-extrabold text-indigo-900">$0.00</span></div>
+<div><label class="block text-[11px] font-bold mb-1 uppercase">Monto</label><input type="number" id="am" step="0.01" min="0.01" inputmode="decimal" placeholder="0.00" oninput="pa()" class="w-full border rounded-lg p-3 text-lg font-extrabold text-center"></div>
+<div class="flex justify-between bg-slate-50 rounded-lg px-3 py-2 text-sm"><span>Nuevo saldo:</span><span id="ans" class="font-extrabold text-amber-600">$0.00</span></div>
+<div class="grid grid-cols-2 gap-2"><button onclick="cm('ma')" class="py-2.5 bg-slate-100 rounded-lg font-semibold text-sm">Cancelar</button><button id="acb" onclick="ca()" class="py-2.5 bg-indigo-600 text-white rounded-lg font-semibold text-sm">Confirmar</button></div>
+</div></div>
+<div id="me" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" onclick="if(event.target===this)cm('me')"><div class="bg-white rounded-2xl w-full max-w-sm p-5 space-y-4">
+<div class="text-center"><h3 class="text-lg font-bold">Eliminar venta?</h3><p id="et" class="text-sm text-slate-500 mt-1"></p></div>
+<div class="grid grid-cols-2 gap-2"><button onclick="cm('me')" class="py-2.5 bg-slate-100 rounded-lg font-semibold text-sm">Cancelar</button><button id="ecb" onclick="ce()" class="py-2.5 bg-rose-600 text-white rounded-lg font-semibold text-sm">Eliminar</button></div>
+</div></div>
+<script>
+!function(){
+"use strict";
+var ds=document.getElementById('ds');if(ds)ds.style.display='none';
+function dg(m,c){var b=document.getElementById('dc'),l=document.createElement('div');if(c=='ok')l.style.color='#065f46';if(c=='err')l.style.color='#991b1b';l.textContent='> '+m;b.appendChild(l);try{console.log('[D]',m)}catch(e){}}
+dg('JS OK '+new Date().toLocaleTimeString());
+window.onerror=function(m,u,l){dg('ERROR L'+l+': '+m,'err')};
+var SU='https://msqdgjrurgixjqajocio.supabase.co',SK='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1zcWRnanJ1cmdpeGpxYWpvY2lvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEzNzQ5NTUsImV4cCI6MjEwNjk1MDk1NX0.ClLSwNP2n6QZQoal-ES0AXDqU9UwZeykW5LaTicLLMk';
+var db=null,VC=[],PC=[],aId=null,eId=null;
+function es(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function fmt2(n){return '$'+(Number(n)||0).toFixed(2)}
+function pd(n){return String(n).padStart(2,'0')}
+function hy(){var d=new Date();return d.getFullYear()+'-'+pd(d.getMonth()+1)+'-'+pd(d.getDate())}
+function md(n){var d=new Date();d.setDate(d.getDate()+n);return d.getFullYear()+'-'+pd(d.getMonth()+1)+'-'+pd(d.getDate())}
+function ff(i){if(!i)return '-';var p=String(i).split('-');return p[2]+'/'+p[1]+'/'+p[0]}
+function ts(m,t){var c={success:'bg-emerald-600',error:'bg-rose-600',info:'bg-slate-800'};var e=document.createElement('div');e.className='px-4 py-3 rounded-xl text-white text-sm font-medium shadow-xl '+(c[t]||c.info);e.textContent=m;document.getElementById('ts').appendChild(e);setTimeout(function(){e.style.transition='opacity .3s';e.style.opacity='0';setTimeout(function(){e.remove()},300)},2800)}
+function om(i){document.getElementById(i).classList.remove('hidden')}
+function cm(i){document.getElementById(i).classList.add('hidden')}
+window.cm=cm;
+function sc(o,m){var e=document.getElementById('cs');if(o)e.innerHTML='<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block mr-1"></span>Conectada';else e.innerHTML='<span class="w-1.5 h-1.5 rounded-full bg-rose-500 inline-block mr-1"></span>'+es(m||'Sin conexion')}
+async function cp(){dg('Productos...');var s=document.getElementById('pr');var r=await db.from('productos').select('*').order('nombre');if(r.error){dg('Prod ERR: '+r.error.message,'err');s.innerHTML='<option value="">Error</option>';return}dg('Prod OK ('+(r.data.length||0)+')','ok');PC=r.data||[];var h='<option value="">-- Seleccionar --</option>';PC.forEach(function(p){h+='<option value="'+es(p.nombre)+'" data-precio="'+(Number(p.precio)||0)+'">'+es(p.nombre)+' - '+fmt2(p.precio)+'</option>'});s.innerHTML=h}
+async function cv(){dg('Ventas...');var c=document.getElementById('lv');c.innerHTML='<p class="text-center text-xs text-slate-400 py-6">Cargando...</p>';var r=await db.from('ventas').select('*').order('id',{ascending:false});if(r.error){dg('Ventas ERR: '+r.error.message,'err');sc(false,'Error');c.innerHTML='<p class="text-center text-sm text-rose-500 py-6">No se pudieron cargar</p>';return}dg('Ventas OK ('+(r.data.length||0)+')','ok');sc(true);VC=r.data||[];ad();rv();rs()}
+function ad(){var s={};VC.forEach(function(v){if(v.cliente)s[v.cliente]=1});var ks=Object.keys(s).sort();document.getElementById('dl').innerHTML=ks.map(function(c){return'<option value="'+es(c)+'"></option>'}).join('')}
+function calc(){var s=document.getElementById('pr'),o=s.options[s.selectedIndex],p=parseFloat((o&&o.dataset&&o.dataset.precio)||0),c=Math.max(1,parseInt(document.getElementById('qt').value)||1);document.getElementById('tt').value=(p*c).toFixed(2)}
+window.calc=calc;
+function sq(d){var i=document.getElementById('qt');i.value=Math.max(1,(parseInt(i.value)||1)+d);calc()}
+window.sq=sq;
+document.getElementById('pr').addEventListener('change',calc);
+document.getElementById('fma').addEventListener('submit',async function(e){e.preventDefault();if(!db)return ts('Sin conexion','error');var b=document.getElementById('bs'),t=document.getElementById('bst'),p=t.textContent;var ei=document.getElementById('eid').value,cl=document.getElementById('cl').value.trim(),pr=document.getElementById('pr').value,qt=parseInt(document.getElementById('qt').value),tt=parseFloat(document.getElementById('tt').value)||0,fv=document.getElementById('fv').value;if(!cl)return ts('Falta cliente','error');if(!pr)return ts('Falta producto','error');if(!qt||qt<1)return ts('Cantidad invalida','error');if(tt<=0)return ts('Total > 0','error');if(!fv)return ts('Falta fecha','error');b.disabled=true;t.textContent='Guardando...';var ok=false;try{if(ei){var idn=Number(ei),av=null;for(var i=0;i<VC.length;i++)if(Number(VC[i].id)===idn){av=VC[i];break}if(!av)throw new Error('No encontrada');var df=tt-Number(av.monto_total),ns=Math.max(0,Number(av.saldo_pendiente)+df),es2='PENDIENTE';if(ns<=0.001)es2='PAGADO';else if(ns<tt)es2='ABONADO';var r1=await db.from('ventas').update({cliente:cl,producto:pr,cantidad:qt,monto_total:tt,saldo_pendiente:ns,fecha_vencimiento:fv,estado:es2}).eq('id',idn);if(r1.error)throw r1.error;ts('Actualizada')}else{var r2=await db.from('ventas').insert([{cliente:cl,producto:pr,cantidad:qt,monto_total:tt,saldo_pendiente:tt,fecha_vencimiento:fv,estado:'PENDIENTE'}]);if(r2.error)throw r2.error;ts('Registrada')}ok=true}catch(err){dg('Guardar: '+(err.message||err),'err');ts(err.message||'Error','error')}finally{b.disabled=false;if(!ok)t.textContent=p}if(ok){cx();await cv()}});
+function cx(){document.getElementById('fma').reset();document.getElementById('eid').value='';document.getElementById('qt').value=1;document.getElementById('fv').value=md(30);document.getElementById('ft').innerHTML='<span class="w-2 h-2 rounded-full bg-indigo-500"></span>Registrar Venta';document.getElementById('bst').textContent='Guardar';document.getElementById('bc').classList.add('hidden');calc()}
+window.cx=cx;
+function ev(id){var v=null;for(var i=0;i<VC.length;i++)if(Number(VC[i].id)===Number(id)){v=VC[i];break}if(!v)return;document.getElementById('eid').value=v.id;document.getElementById('cl').value=v.cliente||'';document.getElementById('qt').value=v.cantidad||1;document.getElementById('fv').value=v.fecha_vencimiento||'';var s=document.getElementById('pr'),ex=false;for(var j=0;j<s.options.length;j++)if(s.options[j].value===v.producto){ex=true;break}if(!ex&&v.producto){var pu=v.cantidad?Number(v.monto_total)/Number(v.cantidad):Number(v.monto_total),o=new Option(v.producto+' (hist)',v.producto);o.dataset.precio=pu;s.add(o)}s.value=v.producto||'';calc();document.getElementById('ft').innerHTML='<span class="w-2 h-2 rounded-full bg-amber-500"></span>Editando';document.getElementById('bst').textContent='Guardar Cambios';document.getElementById('bc').classList.remove('hidden');window.scrollTo({top:0,behavior:'smooth'})}
+window.ev=ev;
+function aa(id){var v=null;for(var i=0;i<VC.length;i++)if(Number(VC[i].id)===Number(id)){v=VC[i];break}if(!v)return;aId=v.id;var s=Number(v.saldo_pendiente);document.getElementById('ac').textContent=v.cliente+' - '+v.producto;document.getElementById('asa').textContent=fmt2(s);document.getElementById('ans').textContent=fmt2(s);document.getElementById('ans').className='font-extrabold text-amber-600';var inp=document.getElementById('am');inp.value='';inp.max=s;om('ma');setTimeout(function(){inp.focus()},120)}
+window.aa=aa;
+function pa(){var v=null;for(var i=0;i<VC.length;i++)if(Number(VC[i].id)===Number(aId)){v=VC[i];break}if(!v)return;var s=Number(v.saldo_pendiente),m=parseFloat(document.getElementById('am').value)||0,n=Math.max(0,s-m),el=document.getElementById('ans');el.textContent=fmt2(n);el.className=n<=0.001?'font-extrabold text-emerald-600':'font-extrabold text-amber-600'}
+window.pa=pa;
+async function ca(){if(!db)return ts('Sin conexion','error');var v=null;for(var i=0;i<VC.length;i++)if(Number(VC[i].id)===Number(aId)){v=VC[i];break}if(!v)return;var s=Number(v.saldo_pendiente),m=parseFloat(document.getElementById('am').value);if(isNaN(m)||m<=0)return ts('Monto invalido','error');if(m>s+0.001)return ts('Excede saldo','error');var ns=Math.max(0,s-m),est=ns<=0.001?'PAGADO':'ABONADO',b=document.getElementById('acb');b.disabled=true;b.textContent='...';var r=await db.from('ventas').update({saldo_pendiente:ns,estado:est}).eq('id',v.id);b.disabled=false;b.textContent='Confirmar';if(r.error){dg('Abono ERR: '+r.error.message,'err');return ts('Error','error')}cm('ma');ts('Abono '+fmt2(m)+' registrado');await cv()}
+window.ca=ca;
+function ae(id){var v=null;for(var i=0;i<VC.length;i++)if(Number(VC[i].id)===Number(id)){v=VC[i];break}if(!v)return;eId=v.id;document.getElementById('et').textContent=v.cliente+' - Total '+fmt2(v.monto_total);om('me')}
+window.ae=ae;
+async function ce(){if(!db)return ts('Sin conexion','error');var v=null;for(var i=0;i<VC.length;i++)if(Number(VC[i].id)===Number(eId)){v=VC[i];break}if(!v)return;var b=document.getElementById('ecb');b.disabled=true;b.textContent='...';var r=await db.from('ventas').delete().eq('id',v.id);b.disabled=false;b.textContent='Eliminar';if(r.error){dg('Elim ERR: '+r.error.message,'err');return ts('Error','error')}cm('me');ts('Eliminada');await cv()}
+window.ce=ce;
+function lf(){document.getElementById('fc').value='';document.getElementById('ff').value='';document.getElementById('fe').value='PENDIENTE';rv()}
+function lf(){document.getElementById('fc').value='';document.getElementById('ff').value='';document.getElementById('fe').value='PENDIENTE';rv()}
+window.lf=lf;
+function rs(){var pc=0,cb=0,p=0,vc=0,t=hy();VC.forEach(function(v){var s=Number(v.saldo_pendiente)||0,tt=Number(v.monto_total)||0;if(v.estado!=='PAGADO'){pc+=s;p++;if(v.fecha_vencimiento&&v.fecha_vencimiento<t)vc++}cb+=Math.max(0,tt-s)});document.getElementById('s1').textContent=fmt2(pc);document.getElementById('s2').textContent=p;document.getElementById('s3').textContent=vc;document.getElementById('s4').textContent=fmt2(cb)}
+function rv(){var c=document.getElementById('lv'),fc=document.getElementById('fc').value.toLowerCase().trim(),ffv=document.getElementById('ff').value,fev=document.getElementById('fe').value,t=hy();var li=VC.filter(function(v){var cc=String(v.cliente==null?'':v.cliente).toLowerCase();if(fc&&cc.indexOf(fc)===-1)return false;if(ffv&&v.fecha_vencimiento!==ffv)return false;if(fev==='PENDIENTE'){if(v.estado!=='PENDIENTE'&&v.estado!=='ABONADO')return false}else if(fev==='VENCIDAS'){if(v.estado==='PAGADO')return false;if(!v.fecha_vencimiento||v.fecha_vencimiento>=t)return false}else if(fev==='PAGADO'){if(v.estado!=='PAGADO')return false}return true});li.sort(function(a,b){var o={PENDIENTE:0,ABONADO:1,PAGADO:2},da=o[a.estado]==null?3:o[a.estado],db2=o[b.estado]==null?3:o[b.estado];if(da!==db2)return da-db2;return String(a.fecha_vencimiento||'').localeCompare(String(b.fecha_vencimiento||''))});var tot=0;c.innerHTML='';if(li.length===0){c.innerHTML='<div class="text-center py-10 text-slate-400"><p class="text-sm">No hay ventas</p></div>';document.getElementById('tf').textContent='$0.00';document.getElementById('cn').textContent='';return}li.forEach(function(v){var s=Number(v.saldo_pendiente)||0,tt=Number(v.monto_total)||0;tot+=s;var vn=v.estado!=='PAGADO'&&v.fecha_vencimiento&&v.fecha_vencimiento<t;var card=document.createElement('div'),cc;if(v.estado==='PAGADO')cc='bg-emerald-50 border-emerald-200';else if(vn)cc='bg-rose-50 border-rose-200';else cc='bg-white border-slate-200';card.className='rounded-xl border p-3.5 shadow-sm '+cc;var eb;if(v.estado==='PAGADO')eb='<span class="text-[10px] font-bold px-2 py-1 rounded-full bg-emerald-200 text-emerald-800">PAGADO</span>';else if(v.estado==='ABONADO')eb='<span class="text-[10px] font-bold px-2 py-1 rounded-full bg-amber-100 text-amber-800">ABONADO</span>';else eb='<span class="text-[10px] font-bold px-2 py-1 rounded-full bg-rose-100 text-rose-800">PENDIENTE</span>';var vb=vn?'<span class="text-[10px] font-bold px-2 py-1 rounded-full bg-rose-600 text-white ml-1">VENCIDA</span>':'';var ab=v.estado!=='PAGADO'?'<button onclick="aa('+Number(v.id)+')" class="bg-indigo-600 text-white font-semibold px-2.5 py-1.5 rounded-md text-[11px]">+ Abono</button>':'';var fm2=vn?'<span class="text-rose-600 font-bold">'+ff(v.fecha_vencimiento)+'</span>':'<span class="font-medium">'+ff(v.fecha_vencimiento)+'</span>';var sc2=s>0?'text-indigo-600':'text-emerald-600';card.innerHTML='<div class="flex justify-between items-start gap-2 mb-2"><div class="min-w-0 flex-1"><p class="font-bold text-slate-800 text-sm truncate">'+es(v.cliente)+'</p><p class="text-xs text-slate-500 truncate">'+es(v.producto)+' x'+es(v.cantidad)+'</p></div><div class="flex-shrink-0 flex items-center">'+eb+vb+'</div></div><div class="flex justify-between items-end pt-2 border-t gap-2"><div class="min-w-0"><p class="text-[10px] text-slate-500">Vence: '+fm2+'</p><p class="text-xs text-slate-600 mt-0.5">Total: <span class="font-semibold">'+fmt2(tt)+'</span> | Saldo: <span class="font-bold '+sc2+'">'+fmt2(s)+'</span></p></div><div class="flex gap-1 flex-shrink-0">'+ab+'<button onclick="ev('+Number(v.id)+')" class="bg-white border text-slate-600 p-1.5 rounded-md text-xs">&#9998;</button><button onclick="ae('+Number(v.id)+')" class="bg-white border text-rose-500 p-1.5 rounded-md text-xs">X</button></div></div>';c.appendChild(card)});document.getElementById('tf').textContent=fmt2(tot);document.getElementById('cn').textContent=li.length+' registros'}
+window.rv=rv;
+function ls(){return new Promise(function(res,rej){if(window.supabase&&typeof window.supabase.createClient==='function')return res();var s=['https://unpkg.com/@supabase/supabase-js@2.58.0/dist/umd/supabase.js','https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.58.0/dist/umd/supabase.js'],i=0;function n(){if(i>=s.length)return rej(new Error('No SDK'));var u=s[i++];dg('Probando '+u.split('/')[2]+'...');var e=document.createElement('script');e.src=u;e.async=false;e.onload=function(){if(window.supabase&&typeof window.supabase.createClient==='function'){dg('SDK OK','ok');res()}else n()};e.onerror=function(){dg('Fallo '+u.split('/')[2],'err');n()};document.head.appendChild(e)}n()})}
+(async function(){dg('Iniciando en '+location.host);if(typeof window.tailwind!=='undefined')dg('Tailwind OK','ok');else dg('Tailwind NO','err');document.getElementById('fv').value=md(30);try{await ls()}catch(e){dg('SDK: '+e.message,'err');sc(false,'SDK no carga');return}try{db=window.supabase.createClient(SU,SK);dg('Cliente OK','ok')}catch(e){dg('Cliente: '+e.message,'err');sc(false,'Error');return}try{await Promise.all([cp(),cv()]);dg('LISTO','ok')}catch(e){dg('Carga: '+(e.message||e),'err');sc(false,'Error')}})();
+}();
+</script>
+</body>
+</html>
